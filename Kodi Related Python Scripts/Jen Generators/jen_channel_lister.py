@@ -19,14 +19,15 @@ class Generator:
 
         # CHANGEME to match the list of channels you want to pull and make the xml for. Name in first section of each doesn't matter. That is just for Print statements to screen
         # Please note, python 2.7 does not natively preserve the ordering of dictionaries. Python 3.6+ does however, so you will find these will process "out of order" on older python
-        self.channel_list = { 'Tantrum.TV Main Channel':'UC3OFPTgSjbex5P4TcL_XINA',
-            'Tantrum Dev Channel':'UCs_Ci64Q3vz8h8rBhOkPMYw',
-            'Rohas Tutorials':'UCUmoHlZIkuEWZkg04DsNeSw',
-            'TeverZ':'UC_jjtvJiMqzZ4pj6KxzB_2A',
-            'Laughsss':'UCJdhWyhj96bmzbNCi5uMQVQ',
-            'Doggmatic 71':'UCK64W1nGRL0aEZ3uhSxeRCw',
-            'DaButcher':'UC-jBkGiRokRd-B2ylx1VqJQ',
-            'Blue':'UCM697Z4A_TLw8S4xUOOuFJw'
+        self.channel_list = { 'Spaghetti Western TV':'UCty9vU1tHhH32ruhWbIpFwA',
+            'Western TV Series':'UCI3jCHxTrdgLs2BNIfSlfSQ',
+            'Western Mania':'UCPUU5swJo5XLqvn77s6FB8g',
+            'Westerns on the Web':'UCUlKudY9luAjzmzszG_sduw',
+            'Wild West Toys':'UC9DohyHhE0rhKUWAS2xCBDQ',
+            'Western Movies and Films':'UCXyYbZ77cwxZfvVYYz5Xy0A',
+            'Western Library':'UC7DPnF9VLnyQDiSUrOGWcsw',
+            'The Western Club':'UCF20DheCsen-iOMtHN1XMcw',
+            'Western Mania HD':'UCLEkm0_3IUzDtPypdhIYMjw'
             }
 
         # generate files
@@ -34,6 +35,7 @@ class Generator:
 
         # notify user
         print('Finished parsing the Youtube Channel List. Output saved as channels.xml')
+
 
     def _generate_yt_templates ( self ):
 
@@ -51,11 +53,13 @@ class Generator:
                 resp = inp.json()
  
                 title_temp = resp["items"][0]['snippet']["localized"]["title"]
+                desc = str(resp["items"][0]['snippet']["localized"]["description"])
                 title = title_temp
                 title_temp = replaceHTMLCodes(title_temp)
                 title_temp = replaceEscapeCodes(title_temp)
-                title_temp = title_temp.replace(u'\xa0', u' ').replace(u'\xe4', u'a').replace(u'\xe9', u'e').replace(u'\xeb', u'e').replace(u'\xe6', u'ae').replace(u'\xfa', u'u').replace(u'\xda', u'U').replace(u'\xe7', u'c')
+                title_temp = title_temp.replace(u'\u2122', 'N').replace(u'\xa0', u' ').replace(u'\xe4', u'a').replace(u'\xe9', u'e').replace(u'\xeb', u'e').replace(u'\xe6', u'ae').replace(u'\xfa', u'u').replace(u'\xda', u'U').replace(u'\xe7', u'c')
                 title_temp = title_temp.replace(u'\xe0', u'a').replace(u'\xc9', u'E').replace(u'\xf3', u'o').replace(u'\xff', u'y').replace(u'\xe1', u'a').replace(u'\xed', u'i').replace(u'\xf1', u'n').replace(u'\xe3', u'a')
+                title = title.encode('ascii',errors='ignore')
                 title_temp = title_temp.lower()
 
                 try:
@@ -65,6 +69,9 @@ class Generator:
 
                 output_string = output_string + '<plugin>\n'
                 output_string = output_string + '    <title>' + str(title) + '</title>\n'
+                output_string = output_string + '    <meta>\n'
+                output_string = output_string + '       <summary>' + str(desc) + '</summary>\n'
+                output_string = output_string + '    </meta>\n'
                 output_string = output_string + '    <link>plugin://plugin.video.youtube/channel/' + str(self.channel_list[channel_id]) + '/</link>\n'
                 output_string = output_string + '    <thumbnail>' + str(thumbnail) + '</thumbnail>\n'
                 if not self.fanart == None:
@@ -98,6 +105,7 @@ def replaceEscapeCodes(txt):
         import HTMLParser as html_parser
     txt = html_parser.HTMLParser().unescape(txt)
     return txt
+
 
 def randomagent():
     import random
